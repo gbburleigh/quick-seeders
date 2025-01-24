@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quick-seeders"
+version = "0.1.0"
+description = "Python package for generating seed data for testing and development"
+authors = [{name = "Graham Burleigh", email = "grahamburleigh6@gmail.com"}]
+dependencies = ["faker"]
+
+[tool.pytest]
+testpaths = ["tests"]
