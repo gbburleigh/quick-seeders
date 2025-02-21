@@ -9,5 +9,9 @@ description = "Python package for generating seed data for testing and developme
 authors = [{name = "Graham Burleigh", email = "grahamburleigh6@gmail.com"}]
 dependencies = ["faker"]
 
+[tool.setuptools.packages.find]
+include = ["seeder*"]
+exclude = ["exports*"]
+
 [tool.pytest]
 testpaths = ["tests"]

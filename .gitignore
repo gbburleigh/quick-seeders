@@ -1,1 +1,7 @@
 .DS_STORE
+dist/*
+__pycache__/
+seeder-env
+exports/
+quick_seeders.egg-info/
+/exports
