@@ -1,8 +1,30 @@
-import json
-from seeder import Seeder
-from seeder.types import *
+'''
+    Example usage of the seeder package
+'''
 from datetime import datetime, timedelta
+
 from pprint import pprint
+
+from seeder import Seeder
+from seeder.types import (
+    ID,
+    Name,
+    Email,
+    Phone,
+    Address,
+    Date,
+    Currency,
+    Bool,
+    City,
+    State,
+    Zip,
+    Country,
+    Website,
+    Enum,
+    Null,
+    Text,
+    Number
+)
 
 def schema_example():
     """Example of using JSON schema to generate data"""
@@ -117,7 +139,7 @@ def direct_generator_example():
 
 def transaction_example():
     """Generate complex financial transaction records"""
-    
+
     # Calculate dates for recent transactions
     end_date = datetime.now()
     start_date = end_date - timedelta(days=90)  # Last 90 days
@@ -388,6 +410,6 @@ if __name__ == '__main__':
     print("\nGenerating financial transaction records...")
     data = transaction_example()
     print(f"Generated {len(data)} transaction records")
-    
+
     print("Sample transaction:")
     pprint(data[0])
