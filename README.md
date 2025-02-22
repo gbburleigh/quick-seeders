@@ -1,26 +1,6 @@
 # Quick-Seeders
 
-A Python utility for generating large amounts of realistic fake data for testing and development. Quick-Seeders allows you to define data schemas and generate data based on various built-in data types, including names, addresses, emails, phone numbers, currencies, and more.
-
-## Features
-
-*   **Schema-based data generation:** Define your data structure using simple JSON or Python dictionaries.
-*   **Built-in data types:** Supports a wide range of data types, including:
-    *   Text (with configurable length)
-    *   Currency (with symbol, min/max values)
-    *   Enums (with predefined choices)
-    *   IDs (with prefix and length)
-    *   Names
-    *   Addresses
-    *   Emails (with different types: random, safe, free, company, specific domain)
-    *   Phone Numbers (with locale support)
-    *   Websites, Domain Names, Domain Words, TLDs
-    *   Countries, States (with abbreviations), Cities, Zip codes
-    *   Booleans
-*   **Probability control:** Set the probability of generating a value for each field.
-*   **SQL output:** Easily write generated data to `.sql` files with `INSERT` statements and optional `CREATE TABLE` statements.
-*   **Easy to use:** Simple API for generating data with minimal code.
-*   **Extensible:** Easily add custom data types or generators.
+A Python package for generating realistic test data with a simple, flexible API.
 
 ## Installation
 
@@ -28,100 +8,237 @@ A Python utility for generating large amounts of realistic fake data for testing
 pip install quick-seeders
 ```
 
-## Usage
+## Features
 
-### Example using a list of generators
+- Generate realistic test data with minimal setup
+- Support for 40+ data types including:
+  - Basic types (text, numbers, booleans)
+  - Personal data (names, emails, phones)
+  - Dates and times (with flexible format support)
+  - Geographic data (addresses, coordinates)
+  - Financial data (currency, credit cards, IBANs)
+  - Internet data (URLs, IPs, user agents)
+  - And many more!
+- Export to multiple formats (JSON, CSV, SQL)
+- Probability-based null values
+- Flexible date/time range specifications
+- Schema-based or direct generator usage
+
+## Quick Start
+
+### Using Schema Definition
 
 ```python
-from quick_seeders.seeder import ID, Name, Address, Currency, Boolean, Text, Enum, seed
-import json
+from seeder import Seeder
 
-generators = [
-    ID(prefix="USER-"),
-    Name(),
-    Address(),
-    Currency(symbol="£"),
-    Boolean(),
-    Text(max_length=100),
-    Enum(['Small', 'Medium', 'Large'])
+# Define your schema
+schema = [
+    {
+        "name": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 1000
+    },
+    {
+        "name": "first_name",
+        "type": "name"
+    },
+    {
+        "name": "email",
+        "type": "email",
+        "email_type": "company"
+    },
+    {
+        "name": "hire_date",
+        "type": "datetime",
+        "start_date": "2020-01-01",
+        "end_date": "today"
+    }
 ]
 
-generated_data = seed(generators, num_records=3)
-print(json.dumps(generated_data, indent=2))
+# Generate data
+seeder = Seeder()
+data = seeder.seed(schema, count=100)
+
+# Export to different formats
+seeder.to_json('employees')
+seeder.to_csv('employees')
+seeder.to_sql('insert_employees', 'employees')
 ```
 
-### Example using named generators (for explicit field names):
+### Using Direct Generators
 
 ```python
-from quick_seeders.seeder import ID, Name, Address, Currency, Boolean, Text, Enum, seed_with_names
-import json
-
-named_generators = {
-    "user_id": ID(prefix="USER-"),
-    "full_name": Name(),
-    "home_address": Address(),
-    "account_balance": Currency(symbol="€"),
-    "is_active": Boolean(),
-    "description": Text(max_length=100),
-    "size": Enum(['Small', 'Medium', 'Large'])
-}
-
-named_generated_data = seed_with_names(named_generators, num_records=3)
-print(json.dumps(named_generated_data, indent=2))
-```
-
-### Writing to SQL
-
-```python
-from quick_seeders.seeder import ID, Name, seed, write_to_sql
-
-generators = [ID(), Name()]
-generated_data = seed(generators, num_records=5)
-write_to_sql(generated_data, "users", "users.sql")
-```
-
-This will create a `users.sql` file containing the generated data as SQL `INSERT` commands.
-
-## Defining Schemas (Alternative to generator lists/dicts)
-
-You can define schemas in JSON format and use the `Seeder` class:
-
-```JSON
-{
-  "schema_name": "product",
-  "fields": [
-    {"name": "id", "type": "integer", "min": 1, "max": 1000},
-    {"name": "name", "type": "text", "max_length": 50},
-    {"name": "price", "type": "currency", "symbol": "$", "min_value": 10, "max_value":100},
-    {"name": "in_stock", "type": "boolean"}
-  ]
-}
-```
-
-Then in Python:
-
-```python
-from quick_seeders.seeder import Seeder
-import json
+from seeder import Seeder
+from seeder.types import ID, Name, Email, Date
 
 seeder = Seeder()
-try:
-    with open("schema.json", "r") as f:
-        schema = json.load(f)
-    data = seeder.seed(schema, 5)
-    print(json.dumps(data, indent=2))
-except FileNotFoundError:
-    print("Schema file not found")
-except json.JSONDecodeError:
-    print("Invalid JSON in schema file")
-except (ValueError, TypeError, AttributeError) as e:
-    print(f"Error seeding data: {e}")
+data = seeder.seed([
+    ID('id'),
+    Name('first_name'),
+    Email('email', email_type='company'),
+    Date('hire_date', start_date='-30d', end_date='today')
+], count=100)
+```
+
+## Advanced Features
+
+### Date/Time Formatting
+
+Support for multiple date/time formats and relative times:
+
+```python
+from seeder.types import Datetime, Date, Time
+
+# ISO format
+dt1 = Datetime('timestamp', "2024-03-14T09:00:00", "2024-03-14T17:00:00")
+
+# Date only
+dt2 = Date('date', "2024-03-14", "2024-03-15")
+
+# Keywords
+dt3 = Datetime('current', "today", "now")
+
+# Relative times
+dt4 = Datetime('recent', "-1h", "now")  # Last hour
+dt5 = Date('past_week', "-7d", "today")  # Last 7 days
+```
+
+### Probability-Based Null Values
+
+Control the probability of generating null values:
+
+```python
+from seeder.types import Text, Number
+
+# 50% chance of being null
+text = Text('description', probability=50)
+
+# 80% chance of having a value
+number = Number('score', probability=80)
+```
+
+## Available Types
+
+### Basic Types
+- Text
+- Int
+- Number
+- Bool
+- Null
+- Enum
+
+### Personal Information
+- Name
+- Email
+- Phone
+- Address
+
+### Dates and Times
+- Date
+- Datetime
+- Time
+- Timestamp
+- TimeZone
+- DayOfWeek
+
+### Geographic
+- Country
+- State
+- City
+- Zip
+- LatitudeLongitude
+
+### Internet
+- Website
+- URL
+- IPAddress
+- UserAgent
+- SocialMediaHandle
+- MACAddress
+
+### Financial
+- Currency
+- CreditCardNumber
+- IBAN
+- BIC
+
+### Identifiers
+- ID
+- UUID
+- SKU
+- ISBN
+- ISBN13
+- EAN
+- Hash
+
+### Text Content
+- Sentence
+- Paragraph
+- LoremIpsum
+
+### Business
+- JobTitle
+- CompanyDepartment
+
+## Type Options
+
+### Common Parameters
+All types accept these basic parameters:
+- `name`: The column name for the generated data
+- `probability`: Chance of generating a value vs null (0-100)
+
+### Type-Specific Parameters
+
+#### Date/Time Types
+```python
+Datetime(name, start_date="1970-01-01", end_date="today")
+Date(name, start_date="1970-01-01", end_date="today")
+Time(name, start_time="00:00:00", end_time="23:59:59")
+```
+
+#### Text Types
+```python
+Text(name, min_length=10, max_length=100)
+Sentence(name, nb_words=6, variable_nb_words=True)
+Paragraph(name, nb_sentences=3, variable_nb_sentences=True)
+```
+
+#### Number Types
+```python
+Int(name, min_value=0, max_value=99999)
+Currency(name, symbol="$", min_value=0, max_value=1000)
+```
+
+#### Email Types
+```python
+Email(name, email_type="safe")  # Types: safe, free, company
+```
+
+## Export Formats
+
+### JSON Export
+```python
+seeder.to_json('filename')  # Creates filename.json
+```
+
+### CSV Export
+```python
+seeder.to_csv('filename')  # Creates filename.csv
+```
+
+### SQL Export
+```python
+seeder.to_sql('filename', 'table_name')  # Creates filename.sql
 ```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue if you have any suggestions or improvements.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is open-sourced under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
+```
+
+Would you like me to add any additional sections or make any adjustments to the formatting?

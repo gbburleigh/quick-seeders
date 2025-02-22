@@ -1,3 +1,6 @@
+'''
+    Module exports
+'''
 from .seed import Seeder
 from .types import *
 
