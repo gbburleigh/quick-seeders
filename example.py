@@ -320,6 +320,47 @@ def transaction_example():
             "type": "version",
             "major_max": 2,
             "minor_max": 10
+        },
+        {
+            "name": "bic",
+            "type": "bic",
+            "probability": 20
+        },
+        {
+            "name": "iban",
+            "type": "iban",
+            "probability": 20
+        },
+        {
+            "name": "macaddress",
+            "type": "macaddress",
+            "probability": 20
+        },
+        {
+            "name": "creditcard",
+            "type": "creditcard",
+            "probability": 20
+        },
+        {
+            "name": "ipaddress",
+            "type": "ipaddress",
+            "probability": 20
+        },
+        {
+            "name": "latlng",
+            "type": "latlng",
+            "probability": 20
+        },
+        {
+            "name": "version",
+            "type": "version",
+            "major_max": 2,
+            "minor_max": 10
+        },
+        {
+            "name": "sentence",
+            "type": "sentence",
+            "probability": 20
         }
     ]
 

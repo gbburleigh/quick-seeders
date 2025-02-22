@@ -93,6 +93,43 @@ class Seeder:
     def __repr__(self):
         return "Seeder()"
 
+    '''
+        @param schema_json: The schema to convert to generators
+        @returns: A list of generators
+
+        Example schema:
+        [
+            {
+                "type": "integer",
+                "name": "id",
+                "min": 1,
+                "max": 100
+            },
+            {
+                "type": "text",
+                "name": "name",
+                "probability": 50
+            },
+            {
+                "type": "enum",
+                "name": "status",
+                "choices": ["active", "inactive"],
+                "probability": 50
+            },
+            {
+                "type": "date",
+                "name": "created_at",
+                "start_date": "2024-01-01",
+                "end_date": "2024-01-31",
+                "probability": 50
+            },
+            {
+                "type": "email",
+                "name": "email",
+                "probability": 50
+            }
+        ]
+    '''
     def schema_to_generators(self, schema_json: List[Dict[str, Any]]) -> List[Any]:
         type_mapping = {
             'integer': Int,
@@ -267,11 +304,6 @@ class Seeder:
                 ))
             elif field_type == 'user_agent':
                 generators.append(UserAgent(
-                    name=field_name,
-                    probability=field.get('probability', 100)
-                ))
-            elif field_type == 'company':
-                generators.append(Company(
                     name=field_name,
                     probability=field.get('probability', 100)
                 ))

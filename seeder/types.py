@@ -7,6 +7,8 @@ fake = Faker("en_US")
 
 def handle_probability(value, fallback, probability):
     sample = random.random()
+    if probability == 100 and not value:
+        return fallback
     if sample < probability / 100:
         return value
     else:
