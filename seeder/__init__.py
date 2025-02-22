@@ -42,7 +42,6 @@ __all__ = [
     "URL",
     "Sentence",
     "Paragraph",
-    "LoremIpsum",
     "UserAgent",
     "Hash",
     "ISBN",

@@ -166,7 +166,6 @@ class Seeder:
             'version': Version,
             'sentence': Sentence,
             'paragraph': Paragraph,
-            'loremipsum': LoremIpsum,
             'useragent': UserAgent,
             'hash': Hash,
             'isbn': ISBN,
